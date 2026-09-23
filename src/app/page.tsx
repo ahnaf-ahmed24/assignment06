@@ -1,69 +1,114 @@
-import Image from "next/image";
+'use client';
+
+import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { Workout } from '../types/workout';
+import { Clock, Flame, Star, ArrowDown } from 'lucide-react';
+import Image from 'next/image';
+import HeroImg from '../assets/banner.png'
 
 export default function Home() {
+  const [workouts, setWorkouts] = useState<Workout[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchWorkouts() {
+      try {
+        const res = await fetch('https://api.abcz.workers.dev/api/fitlog');
+        const data = await res.json();
+        setWorkouts(data);
+      } catch (err) {
+        console.error('Failed to fetch workouts:', err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchWorkouts();
+  }, []);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
+    <div className="container mx-auto px-4 md:px-8 lg:px-12 py-8">
+      {/* Hero Banner */}
+      <div className="bg-[#12141a] rounded-2xl p-8 md:p-12 border border-gray-800 flex flex-col md:flex-row items-center justify-between gap-8 mb-16">
+        <div className="max-w-xl">
+          <span className="text-[#ccff00] text-xs font-bold tracking-widest uppercase">WORKOUT LIBRARY</span>
+          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight mt-2 mb-4 font-sans uppercase">
+            TRAIN WITH INTENT. LOG EVERY SET.
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="text-gray-400 text-sm md:text-base leading-relaxed mb-6">
+            FitLog is a dark, no-nonsense gym companion: pick a lift, lock it into today's plan, and watch the week's work add up.
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          <Link
+            href="#library"
+            className="inline-flex items-center gap-2 bg-[#ccff00] text-black font-bold px-6 py-3 rounded-xl hover:bg-[#b3e600] transition"
           >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            BROWSE WORKOUTS <ArrowDown className="w-4 h-4" />
+          </Link>
         </div>
-      </main>
+        <div className="w-full md:w-1/3 flex justify-center">
+          <Image
+            src={HeroImg}
+            alt="Logo"
+            className="w-full flex justify-center"
+          />
+        </div>
+      </div>
+
+      {/* Library Section */}
+      <div id="library" className="scroll-mt-24">
+        <div className="mb-8">
+          <h2 className="text-2xl font-extrabold uppercase tracking-wide">THE LIBRARY</h2>
+          <p className="text-gray-400 text-sm">Twelve lifts covering every major muscle group.</p>
+        </div>
+
+        {/* Loading Spinner */}
+        {loading ? (
+          <div className="flex justify-center items-center py-24">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-[#ccff00]"></div>
+            <span className="ml-4 text-gray-400">Loading workouts...</span>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {workouts.map((workout) => (
+              <Link
+                key={workout.id}
+                href={`/fitlog/${workout.id}`}
+                className="bg-[#12141a] border border-gray-800 hover:border-gray-600 rounded-xl overflow-hidden transition group flex flex-col justify-between"
+              >
+                <div>
+                  <div className="h-48 w-full relative bg-[#1a1d24] overflow-hidden">
+                    <Image
+                      src={workout.image}
+                      alt={workout.name}
+                      fill
+                      sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      className="object-cover group-hover:scale-105 transition duration-300"
+                    />
+                  </div>
+                  <div className="p-5">
+                    <div className="flex gap-2 mb-2 flex-wrap">
+                      {(workout.muscleGroups || []).map((cat, idx) => (
+                        <span key={idx} className="bg-[#ccff00] text-black text-[10px] font-extrabold px-2 py-0.5 rounded uppercase">
+                          {cat}
+                        </span>
+                      ))}
+                    </div>
+                    <h3 className="text-lg font-bold uppercase text-white mb-1 group-hover:text-[#ccff00] transition">{workout.name}</h3>
+                    <p className="text-gray-400 text-xs mb-4">{workout.equipment}</p>
+                  </div>
+                </div>
+
+                {/* Stat Row */}
+                <div className="px-5 pb-5 pt-0 flex items-center gap-4 text-xs text-gray-400 border-t border-gray-800/50 mt-auto pt-3">
+                  <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> {workout.duration} min</span>
+                  <span className="flex items-center gap-1"><Flame className="w-3.5 h-3.5 text-orange-400" /> {workout.caloriesBurned} kcal</span>
+                  <span className="flex items-center gap-1"><Star className="w-3.5 h-3.5 text-yellow-400 fill-yellow-400" /> {workout.rating}</span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
