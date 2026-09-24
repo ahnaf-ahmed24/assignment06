@@ -12,11 +12,11 @@ export default function MyPlan() {
   const [sortBy, setSortBy] = useState<'duration' | 'caloriesBurned' | 'rating'>('duration');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  
+
 
   const currentList = activeTab === 'plan' ? planList : savedList;
 
-  
+
   const sortedList = [...currentList].sort((a, b) => {
     if (sortBy === 'caloriesBurned') {
       return (b.caloriesBurned || 0) - (a.caloriesBurned || 0);
@@ -24,17 +24,17 @@ export default function MyPlan() {
     return (b[sortBy] || 0) - (a[sortBy] || 0);
   });
 
- 
+
   const totalExercises = currentList.length;
-  const totalMinutes = currentList.reduce((acc, curr) => acc + (curr.duration || 0), 0);
-  const totalCalories = currentList.reduce((acc, curr) => acc + (curr.caloriesBurned || 0), 0);
+  const totalMinutes = currentList.reduce((acc: number, curr: any) => acc + (curr.duration || 0), 0);
+  const totalCalories = currentList.reduce((acc: number, curr: any) => acc + (curr.caloriesBurned || 0), 0);
 
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 3000);
   };
 
-  
+
   const handleToggleStatus = (id: string | number, isCurrentlyDone: boolean) => {
     if (typeof toggleDone === 'function') {
       toggleDone(id);
@@ -82,17 +82,15 @@ export default function MyPlan() {
         <div className="flex bg-[#0e1015] p-1.5 rounded-xl border border-gray-800">
           <button
             onClick={() => setActiveTab('plan')}
-            className={`px-6 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-              activeTab === 'plan' ? 'bg-[#1a1d24] text-white shadow' : 'text-gray-400 hover:text-white'
-            }`}
+            className={`px-6 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${activeTab === 'plan' ? 'bg-[#1a1d24] text-white shadow' : 'text-gray-400 hover:text-white'
+              }`}
           >
             Today's Plan
           </button>
           <button
             onClick={() => setActiveTab('saved')}
-            className={`px-6 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-              activeTab === 'saved' ? 'bg-[#1a1d24] text-white shadow' : 'text-gray-400 hover:text-white'
-            }`}
+            className={`px-6 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${activeTab === 'saved' ? 'bg-[#1a1d24] text-white shadow' : 'text-gray-400 hover:text-white'
+              }`}
           >
             Saved
           </button>
@@ -177,11 +175,10 @@ export default function MyPlan() {
                   {activeTab === 'plan' && (
                     <button
                       onClick={() => handleToggleStatus(item.id, isDone)}
-                      className={`flex items-center gap-1.5 text-xs font-bold px-4 py-2.5 rounded-xl transition cursor-pointer ${
-                        isDone
+                      className={`flex items-center gap-1.5 text-xs font-bold px-4 py-2.5 rounded-xl transition cursor-pointer ${isDone
                           ? 'bg-gray-800 text-gray-300 hover:bg-gray-700'
                           : 'bg-[#ccff00] text-black hover:bg-[#b3e600]'
-                      }`}
+                        }`}
                     >
                       <Check className="w-3.5 h-3.5" />
                       {isDone ? 'Completed' : 'Mark as Done'}
