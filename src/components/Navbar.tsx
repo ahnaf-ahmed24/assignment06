@@ -2,9 +2,14 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React from 'react';
 import Logo from '../assets/logo.png'
+import { usePlan } from '../context/PlanContext';
+import { usePathname } from 'next/navigation';
 
 
 const Navbar = () => {
+    const pathname = usePathname();
+    const { planList, savedList } = usePlan();
+
     return (
         <header className="w-full bg-[#0d0f12] border-b border-gray-800 sticky top-0 z-50">
             <nav className="container mx-auto px-4 md:px-8 lg:px-12 py-4 flex items-center justify-between">
@@ -21,19 +26,21 @@ const Navbar = () => {
 
                 {/* Middle Navigation Link */}
                 <div className="flex items-center gap-2 bg-[#16191e] p-1 rounded-full border border-gray-800">
-          <Link
-            href="/"
-            className={`px-5 py-1.5 rounded-full text-sm font-semibold transition `}
-          >
-            Workouts
-          </Link>
-          <Link
-            href="/my-plan"
-            className={`px-5 py-1.5 rounded-full text-sm font-semibold transition `}
-          >
-            My Plan
-          </Link>
-        </div>
+                    <Link
+                        href="/"
+                        className={`px-5 py-1.5 rounded-full text-sm font-semibold transition ${pathname === '/' ? 'bg-[#ccff00] text-black' : 'text-gray-400 hover:text-white'
+                            }`}
+                    >
+                        Workouts
+                    </Link>
+                    <Link
+                        href="/my-plan"
+                        className={`px-5 py-1.5 rounded-full text-sm font-semibold transition ${pathname === '/my-plan' ? 'bg-[#ccff00] text-black' : 'text-gray-400 hover:text-white'
+                            }`}
+                    >
+                        My Plan
+                    </Link>
+                </div>
 
 
 
@@ -41,11 +48,17 @@ const Navbar = () => {
                 <div className="flex items-center gap-3">
                     <Link href="/" className="flex items-center gap-2 bg-[#ccff00] text-black px-3 py-1 rounded-full text-xs font-bold">
                         <span>Plan</span>
+                        <span>
+                            {planList.length}
+                        </span>
                     </Link>
 
                     <Link href="/" className="flex items-center gap-2 border border-gray-600 text-white px-3 py-1 rounded-full text-xs font-bold hover:border-[#ccff00] transition">
                         <span>
                             Saved
+                        </span>
+                        <span>
+                            {savedList.length}
                         </span>
                     </Link>
 
