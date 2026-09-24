@@ -4,10 +4,10 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePlan } from '../../context/PlanContext';
-import { Clock, Flame, Star, Check, X, ChevronDown, CheckCircle2 } from 'lucide-react';
+import { Clock, Flame, Star, Check, X, ChevronDown, CheckCircle2, Plus } from 'lucide-react';
 
 export default function MyPlan() {
-  const { planList, savedList, completedIds, removeFromPlan, removeFromSaved, markAsDone, toggleDone } = usePlan() as any;
+  const { planList, savedList, completedIds, removeFromPlan, addToPlan, removeFromSaved, markAsDone, toggleDone } = usePlan() as any;
   const [activeTab, setActiveTab] = useState<'plan' | 'saved'>('plan');
   const [sortBy, setSortBy] = useState<'duration' | 'caloriesBurned' | 'rating'>('duration');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -42,6 +42,16 @@ export default function MyPlan() {
       markAsDone(id);
     }
     showToast(isCurrentlyDone ? 'Marked as incomplete' : 'Marked as done!');
+  };
+
+
+  const handleAddToPlan = (item: any) => {
+    const res = addToPlan(item);
+    if (res.success) {
+      showToast("Added to Today's Plan!");
+    } else if (res.reason === 'already') {
+      showToast("Already in Today's Plan!");
+    }
   };
 
   return (
@@ -176,14 +186,27 @@ export default function MyPlan() {
                     <button
                       onClick={() => handleToggleStatus(item.id, isDone)}
                       className={`flex items-center gap-1.5 text-xs font-bold px-4 py-2.5 rounded-xl transition cursor-pointer ${isDone
-                          ? 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                          : 'bg-[#ccff00] text-black hover:bg-[#b3e600]'
+                        ? 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                        : 'bg-[#ccff00] text-black hover:bg-[#b3e600]'
                         }`}
                     >
                       <Check className="w-3.5 h-3.5" />
                       {isDone ? 'Completed' : 'Mark as Done'}
                     </button>
                   )}
+
+
+                  {activeTab === 'saved' && (
+                    <button
+                      onClick={() => handleAddToPlan(item)}
+                      className="flex items-center gap-1.5 bg-[#ccff00] text-black hover:bg-[#b3e600] text-xs font-bold px-4 py-2.5 rounded-xl transition cursor-pointer"
+                    >
+                      
+                      <Plus className="w-3.5 h-3.5" />
+                      Add to Plan
+                    </button>
+                  )}
+
 
                   <button
                     onClick={() => {
