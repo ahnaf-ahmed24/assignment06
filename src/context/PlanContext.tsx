@@ -5,7 +5,7 @@ import { Workout } from '../types/workout';
 
 export type AddResult = {
   success: boolean;
-  reason?: 'added' | 'already' | 'limit';
+  reason?: 'added' | 'already' ;
 };
 
 interface PlanContextType {
@@ -72,9 +72,7 @@ export const PlanProvider = ({ children }: { children: React.ReactNode }) => {
       return { success: false, reason: 'already' };
     }
 
-    if (planList.length >= 5) {
-      return { success: false, reason: 'limit' };
-    }
+   
 
     setPlanList((prev) => [...prev, workout]);
     return { success: true, reason: 'added' };
