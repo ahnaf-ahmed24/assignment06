@@ -42,9 +42,7 @@ export default function WorkoutDetail() {
       showToast("Added to today's plan!");
     } else if (result && result.reason === 'already') {
       showToast("Already added to your plan!");
-    } else if (result && result.reason === 'limit') {
-      showToast("Plan cap reached (Max 5 lifts)!");
-    }
+    } 
   };
 
   const handleSaveLater = () => {
